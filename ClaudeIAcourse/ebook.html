@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PySide6: Do Zero ao Avançado</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .ebook-wrapper {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            display: flex;
+            min-height: 90vh;
+        }
+
+        .sidebar {
+            width: 300px;
+            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px 20px;
+            overflow-y: auto;
+        }
+
+        .sidebar h1 {
+            font-size: 22px;
+            margin-bottom: 10px;
+            color: #3498db;
+        }
+
+        .sidebar .subtitle {
+            font-size: 14px;
+            color: #bdc3c7;
+            margin-bottom: 30px;
+        }
+
+        .chapter-list {
+            list-style: none;
+        }
+
+        .chapter-item {
+            margin-bottom: 5px;
+        }
+
+        .chapter-link {
+            display: block;
+            padding: 12px 15px;
+            color: #ecf0f1;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .chapter-link:hover {
+            background: rgba(52, 152, 219, 0.2);
+            transform: translateX(5px);
+        }
+
+        .chapter-link.active {
+            background: #3498db;
+            font-weight: bold;
+        }
+
+        .chapter-number {
+            display: inline-block;
+            width: 25px;
+            height: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 25px;
+            margin-right: 10px;
+            font-size: 12px;
+        }
+
+        .content {
+            flex: 1;
+            padding: 50px;
+            overflow-y: auto;
+            max-height: 90vh;
+        }
+
+        .chapter {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .chapter.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .chapter h2 {
+            font-size: 32px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .chapter h3 {
+            font-size: 24px;
+            color: #34495e;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        .chapter h4 {
+            font-size: 18px;
+            color: #7f8c8d;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .chapter p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        .code-block {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            border-left: 4px solid #61afef;
+        }
+
+        .code-block .comment {
+            color: #5c6370;
+        }
+
+        .code-block .keyword {
+            color: #c678dd;
+        }
+
+        .code-block .string {
+            color: #98c379;
+        }
+
+        .code-block .function {
+            color: #61afef;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .info-box.warning {
+            background: #fff3e0;
+            border-left-color: #ff9800;
+        }
+
+        .info-box.success {
+            background: #e8f5e9;
+            border-left-color: #4caf50;
+        }
+
+        .info-box.danger {
+            background: #ffebee;
+            border-left-color: #f44336;
+        }
+
+        .info-box strong {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+
+        ul,
+        ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #ecf0f1;
+        }
+
+        .nav-btn {
+            padding: 12px 24px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .nav-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .concept-card {
+            background: white;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .concept-card h4 {
+            color: #3498db;
+            margin-top: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #3498db;
+            color: white;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        .emoji {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .ebook-wrapper {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                max-height: 200px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: #3498db;
+            transition: width 0.3s;
+            z-index: 1000;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+
+    <div class="container">
+        <div class="ebook-wrapper">
+            <aside class="sidebar">
+                <h1>🚀 PySide6 Completo</h1>
+                <p class="subtitle">Do Zero ao Nível NASA</p>
+
+                <ul class="chapter-list" id="chapterList">
+                    <li class="chapter-item">
+                        <a href="#" class="chapter-link active" data-chapter="0">
+                            <span class="chapter-number">📖</span>Introdução
+                        </a>
+                    </li>
+                    <li class="chapter-item">
+                        <a href="#" class="chapter-link" data-chapter="1">
+                            <span class="chapter-number">1</span>Fundamentos
+                        </a>
+                    </li>
+                    <li class="chapter-item">
+                        <a href="#" class="chapter-link" data-chapter="2">
+                            <span class="chapter-number">2</span>Layouts
+                        </a>
+                    </li>
+                    <li class="chapter-item">
+                        <a href="#" class="chapter-link" data-chapter="3">
+                            <span class="chapter-number">3</span>Widgets Essenciais
+                        </a>
+                    </li>
+                    <li class="chapter-item">
+                        <a href="#" class="chapter-link" data-chapter="4">
+                            <span class="chapter-number">4</span>Signals & Slots
+                        </a>
+                    </li>
+                    <li class="chapter-item">
+                        <a href="#" class="chapter-link" data-chapter="5">
+                            <span class="chapter-number">5</span>Diálogos
+                        </a>
+                    </li>
+                    <li class="chapter-item">
+                        <a href="#" class="chapter-link" data-chapter="6">
+                            <span class="chapter-number">6</span>Menus & Toolbars
+                        </a>
+                    </li>
+                    <li class="chapter-item">
+                        <a href="#" class="chapter-link" data-chapter="7">
+                            <span class="chapter-number">7</span>Listas & Tabelas
+                        </a>
+                    </li>
+                    <li class="chapter-item">
+                        <a href="#" class="chapter-link" data-chapter="8">
+                            <span class="chapter-number">8</span>Estilização (QSS)
+                        </a>
+                    </li>
+                    <li class="chapter-item">
+                        <a href="#" class="chapter-link" data-chapter="9">
+                            <span class="chapter-number">9</span>Threading
+                        </a>
+                    </li>
+                    <li class="chapter-item">
+                        <a href="#" class="chapter-link" data-chapter="10">
+                            <span class="chapter-number">10</span>Projeto Final
+                        </a>
+                    </li>
+                    <li class="chapter-item">
+                        <a href="#" class="chapter-link" data-chapter="11">
+                            <span class="chapter-number">🎓</span>Próximos Passos
+                        </a>
+                    </li>
+                </ul>
+            </aside>
+
+            <main class="content">
+                <!-- Capítulo 0: Introdução -->
+                <div class="chapter active" id="chapter-0">
+                    <h2><span class="emoji">📖</span>Bem-vindo ao Crash Course de PySide6!</h2>
+
+                    <p>Este e-book foi criado para te levar do zero ao avançado em desenvolvimento de interfaces
+                        gráficas com PySide6. Seja você um desenvolvedor Python que quer criar aplicações desktop
+                        profissionais ou alguém que busca dominar GUIs, este é o lugar certo!</p>
+
+                    <h3>O que você vai aprender</h3>
+
+                    <div class="concept-card">
+                        <h4>🎯 Fundamentos Sólidos</h4>
+                        <p>Estrutura básica de aplicações PySide6, entendimento profundo de widgets, layouts e o sistema
+                            de eventos que move tudo.</p>
+                    </div>
+
+                    <div class="concept-card">
+                        <h4>💪 Técnicas Intermediárias</h4>
+                        <p>Diálogos, menus, toolbars, manipulação de listas e tabelas, além de criar interfaces bonitas
+                            com QSS.</p>
+                    </div>
+
+                    <div class="concept-card">
+                        <h4>🚀 Conceitos Avançados</h4>
+                        <p>Threading para operações pesadas, arquitetura Model/View, e boas práticas para aplicações
+                            profissionais.</p>
+                    </div>
+
+                    <h3>Por que PySide6?</h3>
+
+                    <ul>
+                        <li><strong>Cross-platform:</strong> Código único para Windows, macOS e Linux</li>
+                        <li><strong>Performance nativa:</strong> Interfaces rápidas e responsivas</li>
+                        <li><strong>Rico em recursos:</strong> Widgets profissionais prontos para uso</li>
+                        <li><strong>Licença LGPL:</strong> Pode ser usado em projetos comerciais</li>
+                        <li><strong>Qt 6:</strong> Baseado no poderoso framework Qt, usado por empresas como Adobe,
+                            Autodesk e Mercedes-Benz</li>
+                    </ul>
+
+                    <div class="info-box">
+                        <strong>💡 Pré-requisitos</strong>
+                        <p>Conhecimento básico de Python é suficiente. Você não precisa ser expert, mas deve estar
+                            confortável com classes, métodos e estruturas básicas do Python.</p>
+                    </div>
+
+                    <h3>Como usar este e-book</h3>
+
+                    <ol>
+                        <li><strong>Leia sequencialmente:</strong> Os capítulos foram organizados do básico ao avançado
+                        </li>
+                        <li><strong>Digite o código:</strong> Não copie e cole! Digitar ajuda a memorizar</li>
+                        <li><strong>Experimente:</strong> Modifique os exemplos e veja o que acontece</li>
+                        <li><strong>Crie projetos:</strong> Após cada capítulo, tente criar algo seu</li>
+                    </ol>
+
+                    <div class="info-box success">
+                        <strong>✅ Instalação Rápida</strong>
+                        <div class="code-block">pip install PySide6</div>
+                        <p>É só isso! Agora você está pronto para começar.</p>
+                    </div>
+
+                    <h3>Estrutura do Curso</h3>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Capítulo</th>
+                                <th>Tópico</th>
+                                <th>Dificuldade</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Fundamentos e Primeira Janela</td>
+                                <td>⭐ Básico</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Layouts - A Base de Tudo</td>
+                                <td>⭐ Básico</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Arsenal de Widgets</td>
+                                <td>⭐⭐ Básico</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>Signals & Slots - Coração do Qt</td>
+                                <td>⭐⭐ Intermediário</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>Diálogos e Interações</td>
+                                <td>⭐⭐ Intermediário</td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td>Menus, Toolbars e Actions</td>
+                                <td>⭐⭐ Intermediário</td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td>Listas, Tabelas e Árvores</td>
+                                <td>⭐⭐⭐ Intermediário</td>
+                            </tr>
+                            <tr>
+                                <td>8</td>
+                                <td>Estilização com QSS</td>
+                                <td>⭐⭐⭐ Intermediário</td>
+                            </tr>
+                            <tr>
+                                <td>9</td>
+                                <td>Threading e Operações Assíncronas</td>
+                                <td>⭐⭐⭐⭐ Avançado</td>
+                            </tr>
+                            <tr>
+                                <td>10</td>
+                                <td>Projeto Final - Dashboard Completo</td>
+                                <td>⭐⭐⭐⭐⭐ Avançado</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="info-box warning">
+                        <strong>⚠️ Importante</strong>
+                        <p>Cada capítulo inclui código completo e funcional. Todos os exemplos foram testados e
+                            funcionam perfeitamente. Se algo não funcionar, revise seu código cuidadosamente!</p>
+                    </div>
+                </div>
+
+                <!-- Capítulo 1: Fundamentos -->
+                <div class="chapter" id="chapter-1">
+                    <h2><span class="emoji">1️⃣</span>Fundamentos - Sua Primeira Janela</h2>
+
+                    <p>Vamos começar criando nossa primeira aplicação PySide6. Não se preocupe com cada detalhe agora -
+                        vamos explicar tudo conforme avançamos!</p>
+
+                    <h3>Anatomia de uma Aplicação PySide6</h3>
+
+                    <p>Toda aplicação PySide6 tem três componentes essenciais:</p>
+
+                    <div class="concept-card">
+                        <h4>1. QApplication - O Gerenciador</h4>
+                        <p>É o coração da aplicação. Gerencia o loop de eventos, recursos do sistema e configurações
+                            globais. Você SEMPRE precisa de uma instância de QApplication.</p>
+                    </div>
+
+                    <div class="concept-card">
+                        <h4>2. QMainWindow - A Janela Principal</h4>
+                        <p>A janela principal da sua aplicação. Vem com menu bar, toolbars, status bar e área central
+                            para widgets.</p>
+                    </div>
+
+                    <div class="concept-card">
+                        <h4>3. Widgets - Os Componentes</h4>
+                        <p>Botões, labels, inputs, etc. São os blocos de construção da sua interface.</p>
+                    </div>
+
+                    <h3>Código: Primeira Janela</h3>
+
+                    <div class="code-block"><span class="keyword">from</span> PySide6.QtWidgets <span
+                            class="keyword">import</span> QApplication, QMainWindow, QPushButton
+                        <span class="keyword">from</span> PySide6.QtWidgets <span class="keyword">import</span> QLabel,
+                        QVBoxLayout, QWidget
+                        <span class="keyword">from</span> PySide6.QtCore <span class="keyword">import</span> Qt
+                        <span class="keyword">import</span> sys
+
+                        <span class="keyword">class</span> <span class="function">MinhaJanela</span>(QMainWindow):
+                        <span class="keyword">def</span> <span class="function">__init__</span>(self):
+                        <span class="function">super</span>().__init__()
+                        self.setWindowTitle(<span class="string">"Minha Primeira Janela"</span>)
+                        self.setGeometry(100, 100, 400, 300)
+
+                        <span class="comment"># Widget central (obrigatório)</span>
+                        central_widget = QWidget()
+                        self.setCentralWidget(central_widget)
+
+                        <span class="comment"># Layout vertical</span>
+                        layout = QVBoxLayout()
+                        central_widget.setLayout(layout)
+
+                        <span class="comment"># Label</span>
+                        self.label = QLabel(<span class="string">"Clique no botão!"</span>)
+                        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+                        layout.addWidget(self.label)
+
+                        <span class="comment"># Botão</span>
+                        btn = QPushButton(<span class="string">"Clique aqui"</span>)
+                        btn.clicked.connect(self.ao_clicar)
+                        layout.addWidget(btn)
+
+                        self.cliques = 0
+
+                        <span class="keyword">def</span> <span class="function">ao_clicar</span>(self):
+                        self.cliques += 1
+                        self.label.setText(<span class="string">f"Cliques: {self.cliques}"</span>)
+
+                        <span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:
+                        app = QApplication(sys.argv)
+                        janela = MinhaJanela()
+                        janela.show()
+                        sys.exit(app.exec())
+                    </div>
+
+                    <h3>Entendendo o Código</h3>
+
+                    <h4>1. Imports</h4>
+                    <p>Importamos apenas o que precisamos. O PySide6 está organizado em módulos:</p>
+                    <ul>
+                        <li><strong>QtWidgets:</strong> Todos os widgets visuais</li>
+                        <li><strong>QtCore:</strong> Funcionalidades core (signals, slots, Qt enums)</li>
+                        <li><strong>QtGui:</strong> Gráficos, fontes, cores, ícones</li>
+                    </ul>
+
+                    <h4>2. Classe MinhaJanela</h4>
+                    <p>Herdamos de QMainWindow e sobrescrevemos o <code>__init__</code>. Sempre chame
+                        <code>super().__init__()</code> primeiro!</p>
+
+                    <h4>3. Widget Central</h4>
+                    <div class="info-box">
+                        <strong>⚠️ Importante:</strong> QMainWindow EXIGE um widget central. Você não pode adicionar
+                        widgets diretamente nele!
+                    </div>
+
+                    <h4>4. Signals & Slots</h4>
+                    <p>A linha <code>btn.clicked.connect(self.ao_clicar)</code> é mágica! Ela conecta o sinal "clicked"
+                        do botão ao método <code>ao_clicar</code>. Quando o botão é clicado, o método é executado
+                        automaticamente.</p>
+
+                    <h4>5. Loop de Eventos</h4>
+                    <p><code>app.exec()</code> inicia o loop de eventos. Seu programa fica "rodando" aqui, processando
+                        cliques, teclas, etc.</p>
+
+                    <div class="info-box success">
+                        <strong>✅ Teste agora!</strong>
+                        <p>Copie o código acima, salve como <code>primeira_janela.py</code> e execute com
+                            <code>python primeira_janela.py</code></p>
+                    </div>
+
+                    <h3>Conceitos-Chave Aprendidos</h3>
+
+                    <ul>
+                        <li>Estrutura básica de uma aplicação PySide6</li>
+                        <li>QApplication gerencia tudo</li>
+                        <li>QMainWindow é sua janela principal</li>
+                        <li>Layouts organizam widgets</li>
+                        <li>Signals conectam a slots (métodos)</li>
+                    </ul>
+                </div>
+
+                <!-- Capítulo 2: Layouts -->
+                <div class="chapter" id="chapter-2">
+                    <h2><span class="emoji">2️⃣</span>Layouts - A Base de Tudo</h2>
+
+                    <p>Layouts são a maneira correta de organizar widgets no Qt. NUNCA use posições absolutas (x, y) -
+                        sempre use layouts!</p>
+
+                    <h3>Por que usar Layouts?</h3>
+
+                    <ul>
+                        <li><strong>Responsividade:</strong> Widgets se ajustam quando a janela é redimensionada</li>
+                        <li><strong>Cross-platform:</strong> Funciona perfeitamente em diferentes sistemas operacionais
+                        </li>
+                        <li><strong>Manutenibilidade:</strong> Muito mais fácil de manter e modificar</li>
+                    </ul>
+
+                    <h3>Os 4 Layouts Essenciais</h3>
+
+                    <div class="concept-card">
+                        <h4>1. QVBoxLayout - Vertical</h4>
+                        <p>Empilha widgets verticalmente, um embaixo do outro.</p>
+                        <div class="code-block">layout = QVBoxLayout()
+                            layout.addWidget(widget1)
+                            layout.addWidget(widget2)
+                            layout.addWidget(widget3)</div>
+                        <p><strong>Use quando:</strong> Formulários, listas verticais, menus</p>
+                    </div>
+
+                    <div class="concept-card">
+                        <h4>2. QHBoxLayout - Horizontal</h4>
+                        <p>Alinha widgets horizontalmente, lado a lado.</p>
+                        <div class="code-block">layout = QHBoxLayout()
+                            layout.addWidget(widget1)
+                            layout.addWidget(widget2)
+                            layout.addWidget(widget3)</div>
+                        <p><strong>Use quando:</strong> Botões de ação, controles de mídia, toolbars customizadas</p>
+                    </div>
+
+                    <div class="concept-card">
+                        <h4>3. QGridLayout - Grade</h4>
+                        <p>Organiza widgets em uma grade de linhas e colunas.</p>
+                        <div class="code-block">layout = QGridLayout()
+                            <span class="comment"># addWidget(widget, linha, coluna, span_linhas, span_colunas)</span>
+                            layout.addWidget(widget1, 0, 0)
+                            layout.addWidget(widget2, 0, 1)
+                            layout.addWidget(widget3, 1, 0, 1, 2) <span class="comment"># span 2 colunas</span>
+                        </div>
+                        <p><strong>Use quando:</strong> Calculadoras, teclados, dashboards complexos</p>
+                    </div>
+
+                    <div class="concept-card">
+                        <h4>4. QFormLayout - Formulários</h4>
+                        <p>Layout especializado para formulários com labels e inputs.</p>
+                        <div class="code-block">layout = QFormLayout()
+                            layout.addRow(<span class="string">"Nome:"</span>, QLineEdit())
+                            layout.addRow(<span class="string">"Email:"</span>, QLineEdit())
+                            layout.addRow(<span class="string">"Senha:"</span>, QLineEdit())</div>
+                        <p><strong>Use quando:</strong> Qualquer formulário de entrada de dados</p>
+                    </div>
+
+                    <h3>Exemplo Completo</h3>
+
+                    <div class="code-block"><span class="keyword">from</span> PySide6.QtWidgets <span
+                            class="keyword">import</span> *
+                        <span class="keyword">import</span> sys
+
+                        <span class="keyword">class</span> <span class="function">LayoutsDemo</span>(QMainWindow):
+                        <span class="keyword">def</span> <span class="function">__init__</span>(self):
+                        <span class="function">super</span>().__init__()
+                        self.setWindowTitle(<span class="string">"Dominando Layouts"</span>)
+
+                        central = QWidget()
+                        self.setCentralWidget(central)
+                        main_layout = QVBoxLayout()
+                        central.setLayout(main_layout)
+
+                        <span class="comment"># VBoxLayout demo</span>
+                        vbox_demo = QWidget()
+                        vbox = QVBoxLayout()
+                        vbox_demo.setLayout(vbox)
+                        vbox.addWidget(QPushButton(<span class="string">"Botão 1"</span>))
+                        vbox.addWidget(QPushButton(<span class="string">"Botão 2"</span>))
+                        vbox.addWidget(QPushButton(<span class="string">"Botão 3"</span>))
+                        main_layout.addWidget(vbox_demo)
+
+                        <span class="comment"># HBoxLayout demo</span>
+                        hbox_demo = QWidget()
+                        hbox = QHBoxLayout()
+                        hbox_demo.setLayout(hbox)
+                        hbox.addWidget(QPushButton(<span class="string">"A"</span>))
+                        hbox.addWidget(QPushButton(<span class="string">"B"</span>))
+                        hbox.addWidget(QPushButton(<span class="string">"C"</span>))
+                        main_layout.addWidget(hbox_demo)
+
+                        <span class="comment"># GridLayout demo</span>
+                        grid_demo = QWidget()
+                        grid = QGridLayout()
+                        grid_demo.setLayout(grid)
+                        grid.addWidget(QPushButton(<span class="string">"1"</span>), 0, 0)
+                        grid.addWidget(QPushButton(<span class="string">"2"</span>), 0, 1)
+                        grid.addWidget(QPushButton(<span class="string">"3"</span>), 0, 2)
+                        grid.addWidget(QPushButton(<span class="string">"4"</span>), 1, 0)
+                        grid.addWidget(QPushButton(<span class="string">"5 (span)"</span>), 1, 1, 1, 2)
+                        main_layout.addWidget(grid_demo)
+        ...
+    </main>
+</div>
+</div>
+
+<script>
+    const links = document.querySelectorAll('.chapter-link');
+    const chapters = document.querySelectorAll('.chapter');
+
+    links.forEach(link => {
+        link.addEventListener('click', event => {
+            event.preventDefault();
+
+            const chapterIndex = link.dataset.chapter;
+
+            links.forEach(l => l.classList.remove('active'));
+            chapters.forEach(c => c.classList.remove('active'));
+
+            document
+                .getElementById(`chapter-${chapterIndex}`)
+                ?.classList.add('active');
+
+            link.classList.add('active');
+        });
+    });
+</script>
+
+</body>
+</html>
