@@ -24,6 +24,7 @@ class MainWindow(QMainWindow):
         button_action = QAction(QIcon("blue-document.png"),"Botão", self)
         button_action.setStatusTip("menu arquivo")
         button_action.triggered.connect(self.toobar_button_clicked)
+        button_action.setShortcut(QKeySequence("Ctrl+p"))
         toolbar.addAction(button_action)
 
         toolbar.addSeparator()
@@ -33,8 +34,16 @@ class MainWindow(QMainWindow):
         button_action2.triggered.connect(self.toobar_button_clicked)
         toolbar.addAction(button_action2)
 
-
         self.setStatusBar(QStatusBar(self))
+
+        menu = self.menuBar()
+
+        file_menu = menu.addMenu("&File")
+        file_menu.addAction(button_action)
+        file_menu.addSeparator()
+
+        file_submenu = file_menu.addMenu("Submenu")
+        file_submenu.addAction(button_action2)
 
     def toobar_button_clicked(self, s):
         print('click', s)
