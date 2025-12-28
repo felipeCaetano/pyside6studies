@@ -44,6 +44,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         try:
             with open('data.json', 'r') as f:
                 self.model.todos = json.load(f)
+        except FileNotFoundError:
+            pass
+
 
 
 app = QtWidgets.QApplication(sys.argv)

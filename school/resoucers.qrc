@@ -1,5 +1,26 @@
 <RCC>
   <qresource prefix="newPrefix">
+    <file>icons/finances3.png</file>
+    <file>icons/finances4.png</file>
+    <file>icons/teachers3.png</file>
+    <file>icons/teachers4.png</file>
+    <file>icons/students3.png</file>
+    <file>icons/students4.png</file>
+    <file>icons/dashboard2.png</file>
+    <file>icons/dashboardsmall1.png</file>
+    <file>icons/financessmall1.png</file>
+    <file>icons/institution2.png</file>
+    <file>icons/institutionsmall1.png</file>
+    <file>icons/logo.png</file>
+    <file>icons/settings2.png</file>
+    <file>icons/settingssmall1.png</file>
+    <file>icons/signout2.png</file>
+    <file>icons/signoutsmall1.png</file>
+    <file>icons/students2.png</file>
+    <file>icons/studentssmall1.png</file>
+    <file>icons/teachers2.png</file>
+    <file>icons/teacherssmall1.png</file>
+    <file>icons/dashboard2.png</file>
     <file>icons/settingssmall1.png</file>
     <file>icons/signoutsmall1.png</file>
     <file>icons/financessmall1.png</file>
