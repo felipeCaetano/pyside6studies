@@ -2,6 +2,8 @@ from PySide6.QtCore import QPropertyAnimation, QEasingCurve, QSize
 from PySide6.QtWidgets import QFrame, QVBoxLayout, QLabel, QPushButton
 import qtawesome as qta
 
+from editorpassagemturno.src.interface.expandedbutton import ExpandableButton
+
 
 class NavigationDrawer(QFrame):
     """Sidebar que pode ser expandida/recolhida"""
@@ -18,7 +20,7 @@ class NavigationDrawer(QFrame):
         """)
 
         self.setup_ui()
-        self.is_expanded = False
+        self.is_expanded = True
 
     def setup_ui(self):
         layout = QVBoxLayout(self)
@@ -38,31 +40,7 @@ class NavigationDrawer(QFrame):
         """)
         layout.addWidget(header)
 
-        # Botões de navegação
-        buttons_data = [("🏠", "Home"), ("📊", "Dashboard"),
-            ("⚙️", "Configurações"), ("📁", "Arquivos"), ("👤", "Perfil"), ]
-
-        for icon, text in buttons_data:
-            btn = QPushButton(f"{icon}  {text}")
-            btn.setStyleSheet("""
-                QPushButton {
-                    background-color: transparent;
-                    color: white;
-                    text-align: left;
-                    padding: 15px 20px;
-                    border: none;
-                    font-size: 14px;
-                }
-                QPushButton:hover {
-                    background-color: #34495e;
-                }
-                QPushButton:pressed {
-                    background-color: #1abc9c;
-                }
-            """)
-            layout.addWidget(btn)
-
-        layout.addStretch()
+        # layout.addStretch()
 
     def add_menu_buttons(self, buttons_data: list):
         text, icon_name, color, slot = buttons_data
@@ -79,11 +57,22 @@ class NavigationDrawer(QFrame):
                 QPushButton:hover { background-color: #34495e;}
                 QPushButton:pressed {background-color: #1abc9c;}
                 """)
-        btn.setIcon(qta.icon(icon_name, color=color))
-        btn.setIconSize(QSize(24, 24))
-        btn.clicked.connect(slot)
+        try:
+            btn.setIcon(qta.icon(icon_name, color=color))
+            btn.setIconSize(QSize(24, 24))
+        except Exception:
+            btn.setIconSize(QSize(24, 24))
+            btn.setIcon(qta.icon('mdi6.square-rounded', color=color))
+        btn.clicked.connect(lambda: slot(text))
         self.layout().addWidget(btn)
 
+    def add_expandeble_buttons(self, buttons_data: list):
+        text, icon, subbuttons, slots, main_slot = buttons_data
+        btn = ExpandableButton(icon, text, slot=main_slot)
+        for index, subbutton in enumerate(subbuttons):
+            sbu_text, sbu_icon = subbutton
+            btn.add_sub_button(sbu_icon, sbu_text, slots[index])
+        self.layout().addWidget(btn)
 
     def toggle(self):
         """Anima a abertura/fechamento do drawer"""
