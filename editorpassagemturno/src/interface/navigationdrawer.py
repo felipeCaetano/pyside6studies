@@ -2,7 +2,7 @@ from PySide6.QtCore import QPropertyAnimation, QEasingCurve, QSize
 from PySide6.QtWidgets import QFrame, QVBoxLayout, QLabel, QPushButton
 import qtawesome as qta
 
-from editorpassagemturno.src.interface.expandedbutton import ExpandableButton
+from .expandedbutton import ExpandableButton
 
 
 class NavigationDrawer(QFrame):

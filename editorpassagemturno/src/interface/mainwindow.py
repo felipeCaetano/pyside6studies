@@ -1,16 +1,20 @@
 import sys
 
 import qtawesome as qta
-from PySide6.QtCore import Qt, Slot, QSize
+from PySide6.QtCore import Qt, QSize, Signal, Slot
 from PySide6.QtGui import QAction
-from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
+from PySide6.QtWidgets import (QMainWindow, QWidget, QVBoxLayout,
                                QHBoxLayout, QPushButton, QLabel, QFileDialog,
                                QTextEdit, QDialog, QMessageBox)
 
-from editorpassagemturno.src.interface.navigationdrawer import NavigationDrawer
+from .navigationdrawer import NavigationDrawer
+from .sestabwidget import SETabs
 
 
 class MainWindow(QMainWindow):
+    file_opened = Signal(str)
+    tab_changed = Signal()
+
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Editor de Passagem de Turno")
@@ -56,20 +60,20 @@ class MainWindow(QMainWindow):
         btn_conf = ["Configuração",
                     qta.icon(
                         "ri.list-check",
-                        options=[{'scale_factor': 1.5}]),
+                        options=[{'scale_factor': 1.1}], color='white'),
                     [
                         ('Serviços Auxiliares',
                          qta.icon(
                              'mdi6.generator-stationary',
-                             options=[{'scale_factor': 1.5}]
+                             options=[{'scale_factor': 1.1}], color='white'
                          )),
                         ('Comunicação',
                          qta.icon('mdi.phone-in-talk',
-                             options=[{'scale_factor': 1.5}]
+                             options=[{'scale_factor': 1.1}], color='white'
                                   )),
                         ('Atenção',
                          qta.icon('ph.circle-wavy-warning',
-                             options=[{'scale_factor': 1.5}]
+                             options=[{'scale_factor': 1.1}], color='white'
                                   ))
                     ],
                     [self.show_config, self.show_config, self.show_config],
@@ -85,26 +89,26 @@ class MainWindow(QMainWindow):
         self.sidebar.add_menu_buttons(btn_obs)
         btn_inter = [
             'Intervenções',
-            qta.icon('ri.tools-fill'),
+            qta.icon('ri.tools-fill', color='white'),
             [('Em Andamento',
               qta.icon(
                   'ei.hourglass',
-                  options=[{'scale_factor': 1.5}]
+                  options=[{'scale_factor': 1.5}], color='white'
               )),
              ('Suspensas',
               qta.icon(
                   'mdi6.timer-pause',
-                  options=[{'scale_factor': 1.5}]
+                  options=[{'scale_factor': 1.5}], color='white'
               )),
              ('Entregues',
               qta.icon(
                   'mdi6.file-document-check-outline',
-                  options=[{'scale_factor': 1.5}]
+                  options=[{'scale_factor': 1.5}], color='white'
               )),
              ('Devolvidas',
               qta.icon(
                   'mdi6.file-document-remove-outline',
-                  options=[{'scale_factor': 1.5}]
+                  options=[{'scale_factor': 1.5}], color='white'
               )),
              ],
             [self.show_config,self.show_config,self.show_config,
@@ -129,35 +133,42 @@ class MainWindow(QMainWindow):
         ]
         self.sidebar.add_menu_buttons(btn_oth)
         self.sidebar.layout().addStretch()
+
         # Conteúdo principal
-        self.title = QLabel("Conteúdo Principal")
-        self.title.setStyleSheet("""
-            font-size: 32px;
-            font-weight: bold;
-            color: #2c3e50;
-            padding: 20px;
-        """)
-        content_layout.addWidget(self.title, alignment=Qt.AlignLeft)
+        # self.title = QLabel("Conteúdo Principal")
+        # self.title.setStyleSheet("""
+        #     font-size: 32px;
+        #     font-weight: bold;
+        #     color: #2c3e50;
+        #     padding: 20px;
+        # """)
+        # content_layout.addWidget(self.title, alignment=Qt.AlignLeft)
 
-        # Editor
-        self.editor = QTextEdit(
-            "Tela inicial - exibirá o conteúdo da passagem de turno")
-        self.editor.setStyleSheet("""
-            QTextEdit {
-                font-size: 16px;
-                color: #2c3e50;
-                background-color: white;
-                border: 1px solid #bdc3c7;
-                border-radius: 5px;
-                padding: 10px;
-            }
-        """)
-        self.editor.document().contentsChanged.connect(
-            self.document_was_modified)
-        content_layout.addWidget(self.editor)
-
+        # # Editor
+        # self.editor = QTextEdit(
+        #     "Tela inicial - exibirá o conteúdo da passagem de turno")
+        # self.editor.setStyleSheet("""
+        #     QTextEdit {
+        #         font-size: 16px;
+        #         color: #2c3e50;
+        #         background-color: white;
+        #         border: 1px solid #bdc3c7;
+        #         border-radius: 5px;
+        #         padding: 10px;
+        #     }
+        # """)
+        # self.editor.document().contentsChanged.connect(
+        #     self.document_was_modified)
+        # content_layout.addWidget(self.editor)
+        self.tabs = SETabs(['SE BGI', 'SE JRM'])
+        self.tabs.tab_was_changed.connect(self.quando_trocar_aba)
+        content_layout.addWidget(self.tabs)
+        self.title = self.tabs.get_title()
         main_layout.addWidget(content_area, stretch=1)
         self.status_bar.showMessage("Pronto", 2000)
+
+    def quando_trocar_aba(self, index):
+        self.tab_changed.emit()
 
     def create_menubar(self):
         menu_file = self.menu.addMenu("&Arquivo")
@@ -167,7 +178,7 @@ class MainWindow(QMainWindow):
         open_action.setIcon(
             qta.icon(
                 "mdi6.folder-open",
-                options=[{'scale_factor': 1.5}]
+                options=[{'scale_factor': 1.1}]
             )
         )
         open_action.triggered.connect(self.open)
@@ -178,7 +189,7 @@ class MainWindow(QMainWindow):
         save_action.setIcon(
             qta.icon(
                 "mdi6.content-save-outline",
-                options=[{'scale_factor': 1.5}]
+                options=[{'scale_factor': 1.1}]
             )
         )
         save_action.triggered.connect(self.save)
@@ -189,7 +200,7 @@ class MainWindow(QMainWindow):
         paste_action.setIcon(
             qta.icon(
                 "mdi6.content-paste",
-                options=[{'scale_factor': 1.5}]
+                options=[{'scale_factor': 1.1}]
             )
         )
         paste_action.triggered.connect(self.paste)
@@ -202,7 +213,7 @@ class MainWindow(QMainWindow):
         export_action.setIcon(
             qta.icon(
                 'mdi6.file-export',
-                options=[{'scale_factor': 1.5}]
+                options=[{'scale_factor': 1.1}]
             )
         )
         export_action.triggered.connect(self.export_file)
@@ -213,7 +224,7 @@ class MainWindow(QMainWindow):
         print_action.setIcon(
             qta.icon(
                 'mdi6.printer-outline',
-                options=[{'scale_factor': 1.5}]
+                options=[{'scale_factor': 1.1}]
             )
         )
         print_action.triggered.connect(self.print)
@@ -224,7 +235,7 @@ class MainWindow(QMainWindow):
         exit.setIcon(
             qta.icon(
                 "mdi6.exit-to-app",
-            options=[{'scale_factor': 1.5}]
+            options=[{'scale_factor': 1.1}]
             )
         )
         menu_file.addSeparator()
@@ -255,6 +266,11 @@ class MainWindow(QMainWindow):
     @Slot()
     def open(self):
         file, filtro = QFileDialog.getOpenFileName(self, "Abrir Arquivo")
+        if file:
+            print(f'{file=}')
+            self.file_opened.emit(file)
+        else:
+            return
 
     @Slot()
     def paste(self):
@@ -282,11 +298,3 @@ class MainWindow(QMainWindow):
     def show_aux_config(self, value):
         self.title.setText(f"Configuração - {value}")
         self.sidebar.toggle()
-
-
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
-    sys.exit(app.exec())
