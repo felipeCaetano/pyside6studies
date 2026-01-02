@@ -3,7 +3,7 @@ import sys
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtCore import Qt
 
-tick = QtGui.QImage('tick.png')
+tick = QtGui.QImage('todo/tick.png')
 
 class TodoModel(QtCore.QAbstractListModel):
     def __init__(self, todos=None):
@@ -17,7 +17,7 @@ class TodoModel(QtCore.QAbstractListModel):
         if role ==Qt.DecorationRole:
             status, _ = self.todos[index.row()]
             if status:
-                return QtGui.QColor('green')
+                return tick
 
     def rowCount(self, index):
         return len(self.todos)

@@ -9,7 +9,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.model = TodoModel(todos=[(False, 'my first todo')])
+        self.model = TodoModel()
+        self.load()
         self.todoView.setModel(self.model)
         self.addButton.pressed.connect(self.add)
         self.deleteButton.pressed.connect(self.delete)
@@ -21,6 +22,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.model.todos.append((False, text))
             self.model.layoutChanged.emit()
             self.todoEdit.clear()
+            self.save()
 
     def delete(self):
         indexes = self.todoView.selectedIndexes()
@@ -29,6 +31,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             del self.model.todos[index.row()]
             self.model.layoutChanged.emit()
             self.todoView.clearSelection()
+            self.save()
 
     def complete(self):
         indexes = self.todoView.selectedIndexes()
@@ -39,11 +42,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.model.todos[row] = (True, text)
             self.model.dataChanged.emit(index, index)
             self.todoView.clearSelection()
+            self.save()
     
     def load(self):
         try:
             with open('data.json', 'r') as f:
                 self.model.todos = json.load(f)
+        except Exception:
+            pass
+
+    def save(self):
+        with open('data.json', 'w') as f:
+            json.dump(self.model.todos, f)
 
 
 app = QtWidgets.QApplication(sys.argv)
