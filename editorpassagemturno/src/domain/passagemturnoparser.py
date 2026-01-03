@@ -291,3 +291,10 @@ class PassagemTurnoParser:
         except Exception as e:
             logger.error(f"[Erro] ao salvar JSON: {e}")
             return False
+
+    @staticmethod
+    def get_sessao_map(filter):
+        if filter == 'CONFIGURAÇÃO ATENÇÃO':
+            filter = 'ATENÇÃO'
+            return SECAO_MAP.get(filter, 'configuracao_se')
+        return SECAO_MAP.get(filter, 'configuracao_se')

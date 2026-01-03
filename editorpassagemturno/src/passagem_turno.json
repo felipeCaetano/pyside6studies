@@ -1,0 +1,168 @@
+{
+    "BGI": {
+        "configuracao_se": [
+            "- 01S4 desenergizada e isolada com 31S4-4/5 abertas, só deve ser energizada com autorização gerencial;",
+            "- 02BP-1 e 02BP-2 seccionadas com disjuntor 12BP aberto;",
+            "- 02H1 desenergizado para controle de tensão;",
+            "- 02J3 e 02J4 desenergizadas, relés 79 desativados e com tensão de retorno;",
+            "- 04T6/T7 com falha na indicação na regulação sage, regulação 13,8kV em MANUAL devido a falha no relé 90;",
+            "- 41S3-8 aberta, só deve ser fechada com autorização gerencial."
+        ],
+        "configuracao_servicos": [
+            "- 01T5 Isolado/inoperante com alguns componentes do circuito danificados e chave 41T5-8 removida."
+        ],
+        "configuracao_comunicacao": [
+            "- Sem registros."
+        ],
+        "atencao": [
+            "- 12J2, 12J4, 12J5, 12J7, 12L2 e 12T8/BGI são disjuntores ABB, durante manobras de abertura e fechamento se afastar e se abrigar 50 metros,",
+            "conforme ROP-DO-OO.C.2024-03 e ROP-OOON.C.2024-34;",
+            "- Conforme orientação da OOPP.C, os relés F1 e F2 dos TRs 230/69 kV, possuem 2 grupos de ajustes das funções de sobrecorrente de fase. Deve-se permutar do grupo",
+            "de ajustes 1 (PADRÃO) para o grupo 2, nas seguintes configurações:",
+            "a) Com os barramentos INTERLIGADOS, 3 (TRÊS) transformadores ou menos 230/69kV energizados;",
+            "b) Com os barramentos DESCONECTADOS:",
+            ". 1) Ativar o grupo de ajuste 2 do 04T1, caso o 04T2 esteja desenergizado, e vice-versa;",
+            ". 2) Ativar o grupo de ajuste 2 do 04T3, APENAS caso o 04T9 esteja desenergizado, e vice-versa;",
+            ". 3) Ativar o grupo de ajuste 2 do 04T4, APENAS caso os 04T3 e 04T9 estejam desenergizados;",
+            "- Quando da indisponibilidade de um dos trafos terra com o 12BP fechado, devemos alterar o ajuste de proteções para o grupo 2, lembrando que o 02A3 não tem esse",
+            "ajuste; Quando o 12BP estiver aberto, alteramos para grupo 2 se o 02A1 ou o 02A2 estiver desligado.",
+            "NÃO CONFORMIDADES TÉRMICAS COM NOVO \"VCO\":",
+            "- 04T5 NCT no conector chapa/cabo da chave seccionadora 34T5-4/BGI com o barramento 04BP-3/BGI, fase B, com VCO=67,97A.(RIT 00TRA.C.121.2025 , NM 11496761 e RT",
+            "RTO H-H-2025-107633);",
+            "- 02J1 NCT contato fixo/móvel da chave seccionadora 32J1-4, fase C, com VCO=573A (RIT OOTRA.C.79.2025, RT-RTO-H-2025-073461 e NM 11460500);",
+            "- 04T2 NCT no conector da bucha de 69kV, fase C, com VCO=983,95 A (RIT 00TRA.C.90.2025 ,NM 11470908 e evento RT RTO H-2025-083980);",
+            "- 04V6 NCT crítica nível 1 no conector T com o pulo de descida para o TC 94V6 fase A, lado da chave seccionadora 34V6-4/BGI, com mudança de VCO=397.82 A (RIT",
+            "00TRA.C.93.2025, NM  11471123 e evento RT RTO H-2025-084320);",
+            "- 31T6-5 NCT nível 1 no contato fixo/móvel, fase A, lado do disjuntor 11T6/BGI, com mudança de VCO=1147,72A (RIT 00TRA.C.91.2025 , NM 11470909 e evento RT RTO",
+            "H-2025- 083996);",
+            "- 31T6-8 NCT,nível 1, no contato Fixo/móvel, fase C, lado do TC 91T6-1/BGI, com mudança de VCO=892,86A.(RIT 00TRA.C.112.2025 , NM 11489615 e evento RT RTO H-",
+            "2025-101154);",
+            "- 34V4-4 NCT no contato fixo/móvel, fase A, lado do barramento 04BP-3/BGI. Com mudança de VCO=469,04A. Criado RIT 00TRA.C.99.2025 , NM 11478034 e evento RT RTO",
+            "H-2025-090874;",
+            "- 34V4-5 NCT, conector chapa cabo, fase B, com VCO=555,56A (RIT OOTRA.C.32.2025, evento RT RTO H-2025-024142 e NM 11414222);",
+            "- 34V6-6 NCT, nível 1, no conector T do pulo da 34V6-6 fase B com o link transversal do barramento 04BA-2, com novo VCO= 287,55A (RIT OOTRA.C.78.2025, NM",
+            "11459480 e evento RT RTO-H-2025-072433;",
+            "- 04V6 NCT ,nível 1,no conector T da LT 04V6-JRM/BGI com o pulo de descida para o TC 94V6 fase A,lado da chave seccionadora 34V6-4/BGI.04V6,com VCO=397,82A (RIT",
+            "OOTRA.C.93.2025, evento RT RTO H-2025-084320 e NM 11471123)."
+        ],
+        "nao_conformidades_termicas": [],
+        "observacoes": [
+            "- 01F4 Referente à falha de ativação 79-01F4 N2/N3 (NM 11495668);",
+            "- 02H1 Sem o Micro-Switch do portão e 32H1-4 com a haste de interligação com eixo dos contatos desacoplada;",
+            "- 04T4 Com defeito mecânico de instabilidade de indicação dos tapes, divergindo em algumas situações a indicação do equipamento com a do SART/SAGE (NM11481844);",
+            "- 04T5 UC1 C264 em falha, removida parte frontal do relé e realizada ação para colocação em REMOTO, ficando disponíveis os níveis 2 E 3, e",
+            "apenas o NÍVEL 1 indisponível.(NM11431903 e evento RT-RTO-H-2025-044057);",
+            "- 04T5 Regulador de TAP sinalizando intermitente no SAGE \"Comutador Falha Leitura de TAP\" e no TREETECH código \"E08\".(NM 11424160 e evento IR-SSD-H-2025-",
+            "034853);",
+            "- 04T5 sinalizando F4 Proteção em TESTE. F4 Falha de GOOSE e F4 Falha Canal Óptico 1 e 2.",
+            "- 04V4 BGI quando coloca as TELEPROTEÇÕES em TESTE, sobe no SAGE apenas a PP;",
+            "- 14V5 Não aceitou abertura pelo SAGE (nível 2 e nível 3, apenas no painel (RT-RTM H-2021-046227 e NM 10811127);",
+            "- 21S1 comando de elétrico inoperante, apenas mecanicamente pela manutenção (NM 11349426 e RT-RTM H-2024-084628);",
+            "- 21S3 comando pelo SAGE inoperante, abertura/fechamento apenas pela chave 101.(NM 11390813 e RT-RTM H-2025-045823);",
+            "- 31BA-1 não completa o curso de fechamento ou abertura, sendo necessário complemento manual, e também apresenta alta resistência na abertura local através da",
+            "manivela.(NM11461148 e RT-RTM-H-2025-074454);",
+            "- 31BA-2 Chave 43LRM travada na posição \"LOCAL\" só aceita abertura/fechamento pela manivela; RT-RTM-H-2024-049483 e NM 11314658);",
+            "- 31BA-3 Não completa curso de fechamento ou abertura elétrico, necessitando de complemento manual por meio da manivela (RT-RTM H-2024-049482 e NM 11314659);",
+            "- 31F5-5 chave sinalizando no SAGE transitando para o estado fechado (em transição). NM11448913 Evento IR-SSD-H-2025-062057;",
+            "- 31T5-8 não aceita comando elétrico remoto de abertura ou fechamento, aceitando apenas o elétrico local (NM 11461147 e RT-RTM-H-2025-074455);",
+            "- 31T6-8 Não completa curso de abertura elétrico/remoto, complementado com manivela (RT-RTM H-2024-052668 e NM11317009);",
+            "- 31T7-4 Não fecha completamente, necessitando do uso do bastão de manobra para garantir um melhor fechamento (RT-RTM H-2023-0985620 e NM 11224025);",
+            "- 31T7-5 Não fecha completamente, necessitando do uso do bastão de manobra para garantir um melhor fechamento (RT-RTM H-2023-0985646 e NM 11224026);",
+            "- 32H1-4 Mecanismo de mudança de estado (aberta/fechada) quebrado, necessitando movimentar a haste do cames manualmente para consistir indicação no SAGE (RT-",
+            "RTM-H-2024-075662 e NM 11339184);",
+            "- 32J5-7 não abre as três fases, sendo necessário apoio da manutenção.(NM11424187)Evento RT-RTM-H-2025-035024;",
+            "- 32L1-6 Mecanismo auxiliar quebrado (NM 11232874);",
+            "- 32L1-7 Não está sinalizando no SAGE a posição fechada (NM 11334682);",
+            "- 32T4-6 sinalizando no SAGE \"Falta Alimentação CA Motor\". (NM 11478983);",
+            "- 34BP-2 fase C com fechamento incompleto, necessitando de apoio da manutenção para manobras (RT-RTM-H-2025-032856 e NM 11422445);",
+            "- 34C1-4 não sinaliza fechamento na lista de alarmes do SAGE. NM-11346728;",
+            "- 34T4-4 Não aceita comando remoto.(RT-RTM H-2025-079395 e NM  11466438);",
+            "- 34T6-5 Impedida para manobras (NM-11315023);",
+            "- 34T7-4 Manivela de acionamento desacoplando quando da abertura da mesma (RT-RTM H-2023-055580 e NM-11180372);",
+            "- 34T9-4 Não sinaliza fechamento/abertura na lista de alarmes do SAGE.(NM-11413702);",
+            "- 34V6-7 Não está indicando fechada na tela do SAGE quando manobrada (NM 11146472)."
+        ],
+        "intervencoes_em_andamento": [
+            "- SI 20715/25H (Venc. 27/02/26) - Entregue SE BGI a Empresa EXA Engenharia fim realizar a Adequação da Infraestrutura Óptica e Implantação do Novo Link",
+            "Óptico BGI-COS;",
+            "- SI 21033/25H (Venc. 30/04/26) - Entregue SE BGI para equipe JPW Engenharia, sob supervisão da IPPTND (Axia), realizar atividade diversas de melhoria na SE-",
+            "BGI."
+        ],
+        "intervencoes_suspensa": [
+            "- Sem registros"
+        ],
+        "intervencoes_entregue": [
+            "- Sem registros."
+        ],
+        "intervencoes_devolvida": [
+            "- Sem registros."
+        ],
+        "nm_emitidas": [
+            "- Sem registros."
+        ],
+        "ocorrencias": [],
+        "outras_acoes_operacionais": [],
+        "outras_informacoes": []
+    },
+    "JRM": {
+        "configuracao_se": [
+            "- Sem registros."
+        ],
+        "configuracao_servicos": [
+            "- Sem registros."
+        ],
+        "configuracao_comunicacao": [
+            "- Sem registros."
+        ],
+        "atencao": [
+            "- 12T3/JRM e 12M7/JRM são disjuntores ABB, durante manobras de abertura e fechamento se afastar e se abrigar 50 metros,",
+            "conforme ROP-DO-OO.C.2024-03 e ROP-OOON.C.2024-34."
+        ],
+        "nao_conformidades_termicas": [
+            "- 32T1-4 NCT no contato fixo/móvel, fase C, lado do barramento 02BP/JRM. Com mudança de VCO=766,91A.(RIT 00TRA.C.96.2025 ,NM 11474359 e evento RT RTO H-",
+            "2025-087190);",
+            "- 32T3-5 fase C, com redução de VCO para 872,43A (RIT: OOTRA.C.73.2025, NM 11457751 e Evento RT-RTO-H-2025-070458);",
+            "- 92T3 NCT, conector chapa/chapa do TC 92T3.A lado da chave seccionadora 32T3-5, fase A. Com mudança de VCO=668,51A.(RIT 00TRA.C.95.2025 ,NM 11474357 e",
+            "evento RT RTO H-2025-087189);"
+        ],
+        "observacoes": [
+            "- 02M7 selecionar o \"Grupo 2 de ajustes\" no relé, quando houver transferência de cargas da LT 02M4/02M5 para a LT 02M7;",
+            "- 04T2 sinalização \"Falha Interna Medidor Temperatura\";",
+            "- 04T3 RDP:OSGA \"Oscilógrafo Grupo de Alarmes\" e RDP:OSEG \"Oscilógrafo em Gravação\" com atuação/normalização intermitente;",
+            "- 12T3 Ocorrendo a atuação do alarme \"FALTA TENSÃO COMANDO\", não manobrar nenhum quick-lag, pois pode dar trip; Acionar DOOS/Manutenção;",
+            "- 32M9-7 SAGE não indica posição \"fechado\" quando a chave é manobrada no pátio (NM 11285706);",
+            "- 32T3-4 Só fecha com o auxílio da manutenção. NM 11446515 e Evento RT-RTM-H-2025-059654;",
+            "- 32T3-6 não aceita comando remoto para fechamento (Evento RT-RTM H-2025-070451 e NM 11457727);",
+            "- 34T2-1 não completa fechamento, fase B. Contato móvel não encaixa de maneira adequada e necessita do apoio da manutenção para fechar (NM 11473594 e RT-RTM H-",
+            "2025-086446);",
+            "- 34T2-2 não completa curso de abertura, necessitando apoio da manutenção para manobra (RT-RTM H-2020-149506 e NM 10735216);",
+            "- 34T3-5 Só fecha na manivela(MANUAL). NM 11446513 e Evento RT-RTM-H-2025-059655;",
+            "- 34V5-7 impedida, não completa o fechamento nem na manivela (RT-RTM H-2021-046220 e NM 10811268)."
+        ],
+        "intervencoes_em_andamento": [
+            "- SI 24488/25H (Venc. 31/01/26) - Entregue setor 69KV/JRM energizado à OOTRA.C fim retirar linha de pipa com equipamentos energizados;",
+            "- SI 24489/25H (Venc. 31/01/26) - Entregue setor 230KV/JRM energizado à OOTRA.C fim retirar linha de pipa com equipamentos energizados."
+        ],
+        "intervencoes_suspensa": [
+            "- Sem registros."
+        ],
+        "intervencoes_entregue": [
+            "- Sem registros."
+        ],
+        "intervencoes_devolvida": [
+            "- Sem registros."
+        ],
+        "nm_emitidas": [
+            "- Sem registros."
+        ],
+        "ocorrencias": [
+            "- Sem registros."
+        ],
+        "outras_acoes_operacionais": [
+            "- Sem registros."
+        ],
+        "outras_informacoes": [
+            "- Sem registros."
+        ]
+    }
+}

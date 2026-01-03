@@ -12,6 +12,7 @@ from .sestabwidget import SETabs
 
 
 class MainWindow(QMainWindow):
+    sidebar_clicked = Signal(str)
     file_opened = Signal(str)
     tab_changed = Signal()
 
@@ -81,7 +82,7 @@ class MainWindow(QMainWindow):
                     ]
         self.sidebar.add_expandeble_buttons(btn_conf)
         btn_nct = [
-            "NCT", "ph.thermometer-hot-light", "orange",  self.show_config]
+            "Não Conformidades Térmicas", "ph.thermometer-hot-light", "orange",  self.show_config]
         self.sidebar.add_menu_buttons(btn_nct)
         btn_obs = [
             "Observações", 'fa5s.exclamation-triangle', 'yellow',
@@ -288,10 +289,13 @@ class MainWindow(QMainWindow):
     def show_config(self, value):
         if value in ["Comunicação", "Atenção", "Serviços Auxiliares"]:
             self.title.setText(f"Configuração - {value}")
+            self.sidebar_clicked.emit(f"Configuração {value}".upper())
         elif value in ["Em Andamento", "Suspensas", "Entregues", "Devolvidas"]:
             self.title.setText(f"Intervenções {value}")
+            self.sidebar_clicked.emit(f"Intervenções {value}".upper())
         else:
             self.title.setText(f"{value}")
+            self.sidebar_clicked.emit(f"{value}".upper())
         self.sidebar.toggle()
 
     @Slot()

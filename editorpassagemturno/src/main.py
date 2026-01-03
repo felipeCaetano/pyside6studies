@@ -21,6 +21,7 @@ class MainApp(QApplication):
         self.ui = MainWindow()
         self.ui.file_opened.connect(self.parse_file)
         self.ui.tab_changed.connect(self.load_fields)
+        self.ui.sidebar_clicked.connect(self.load_fields)
 
     def parse_file(self, file):
         ok = PassagemTurnoParser.parse_passagem_turno(file)
@@ -37,13 +38,15 @@ class MainApp(QApplication):
             else:
                 self.ui.status_bar.showMessage("Erro", 2000)
     
-    def load_fields(self):
+    def load_fields(self, field=None):
         if self.passagem_turno:
+            print(field)
             for index, se_name in enumerate(self.passagem_turno.keys()):
                 self.ui.tabs.get_editor_by_index(index).setPlainText(
-                    "\n".join(self.passagem_turno[se_name]["configuracao_se"])
+                    "\n".join(self.passagem_turno[se_name][PassagemTurnoParser.get_sessao_map(field)])
                     )
         else:
+            print(field)
             return
 
 
