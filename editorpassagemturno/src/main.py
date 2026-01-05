@@ -22,6 +22,7 @@ class MainApp(QApplication):
         self.ui.file_opened.connect(self.parse_file)
         self.ui.tab_changed.connect(self.load_fields)
         self.ui.sidebar_clicked.connect(self.load_fields)
+        self.ui.text_entry.connect(self.paste_data)
         self._load_last_turn()
 
     def parse_file(self, file):
@@ -78,11 +79,26 @@ class MainApp(QApplication):
             return
 
     def _load_last_turn(self):
+        """Começa o aplicativo com os campos carregados caso exista
+        o arquivo .json"""
+
         self.passagem_turno = PassagemTurnoParser.get_passagem_turno(
                 'passagem_turno.json'
             )
         if self.passagem_turno:
             self.load_fields()
+
+    def paste_data(self, data):
+        dados = PassagemTurnoParser.parse_from_text(data)
+        saved = PassagemTurnoParser.salvar_json(dados, 'passagem_turno.json')
+        if saved:
+            self.passagem_turno = PassagemTurnoParser.get_passagem_turno(
+                'passagem_turno.json'
+            )
+            if self.passagem_turno:
+                self.load_fields()
+        else:
+            logging.warning('Falha ao processar entrada.')
 
 
 if __name__ == "__main__":

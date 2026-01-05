@@ -15,6 +15,7 @@ from .sestabwidget import SETabs
 class MainWindow(QMainWindow):
     sidebar_clicked = Signal(str)
     file_opened = Signal(str)
+    text_entry = Signal(str)
     tab_changed = Signal()
 
     def __init__(self):
@@ -173,8 +174,8 @@ class MainWindow(QMainWindow):
         save_action.triggered.connect(self.save)
         menu_file.addAction(save_action)
 
-        paste_action = QAction("Colar", menu_file)
-        paste_action.setShortcut("Ctrl+V")
+        paste_action = QAction("Colar de...", menu_file)
+        paste_action.setShortcut("F4")
         paste_action.setIcon(
             qta.icon(
                 "mdi6.content-paste",
@@ -198,7 +199,7 @@ class MainWindow(QMainWindow):
         menu_file.addAction(export_action)
 
         print_action = QAction("Imprimir", menu_file)
-        print_action.setShortcut("Ctrl+E")
+        print_action.setShortcut("Ctrl+P")
         print_action.setIcon(
             qta.icon(
                 'mdi6.printer-outline',
@@ -254,7 +255,7 @@ class MainWindow(QMainWindow):
     def paste(self):
         dialog = PasteDialog(self)
         if dialog.exec():
-            print(dialog.text.toPlainText())
+            self.text_entry.emit(dialog.text.toPlainText())
 
     @Slot()
     def print(self):

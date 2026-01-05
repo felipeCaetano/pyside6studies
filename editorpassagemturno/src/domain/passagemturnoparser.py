@@ -8,6 +8,22 @@ from .constants import (SECAOMAPREVERSO, ORDEMSECOES, SE_REGEX,
 logger = logging.getLogger(__name__)
 
 def _flush_buffer(dados, estado):
+    """
+    Descarrega o conteúdo acumulado no buffer da seção atual para a
+    estrutura final de dados.
+
+    O destino do buffer depende do tipo da seção:
+    - Seções globais são armazenadas em dados["_global"]
+    - Seções vinculadas a uma subestação são armazenadas sob a SE atual
+
+    Após a gravação, o buffer é limpo.
+
+    Args:
+        dados (dict): Estrutura principal onde os dados parseados são
+        acumulados.
+        estado (dict): Estado atual do parser, contendo seção, subestação
+        e buffer.
+    """
     if not estado["secao_atual"] or not estado['buffer']:
         return
 
@@ -26,6 +42,15 @@ def _flush_buffer(dados, estado):
     estado['buffer'] = []
 
 def nova_se():
+     """
+    Cria e retorna a estrutura base de dados para uma nova subestação (SE).
+
+    Cada chave representa uma seção possível da passagem de turno,
+    inicializada com listas vazias para armazenamento do conteúdo textual.
+
+    Returns:
+        dict: Estrutura padrão de uma subestação.
+    """
     return {
         "configuracao_se": [],
         "configuracao_servicos": [],
@@ -44,23 +69,30 @@ def nova_se():
 
 class PassagemTurnoParser:
     """
-    Camada de dominio responsável por ler, interpretar, montar e persistir
-    arquivos de passagem de turno em formatos texto e JSON.
+    Responsável por interpretar, estruturar, serializar e reconstruir
+    passagens de turno em formato texto e JSON.
 
-    Centraliza regras de parsing, serialização e reconstrução do conteúdo.
+    Esta classe centraliza as regras de parsing e garante que o conteúdo
+    seja organizado por subestação e por seção, mantendo consistência
+    entre leitura, persistência e reconstrução do texto original.
     """
 
     @staticmethod
     def _ler_linhas(txt_file):
         """
-        Lê um arquivo de texto e retorna suas linhas como uma lista de strings.
+        Lê um arquivo de texto e retorna seu conteúdo como uma lista de
+        linhas.
+
         Remove quebras de linha e espaços à direita de cada linha.
+        Em caso de erro (arquivo inexistente, encoding inválido ou falha de
+        IO),
+        retorna None e registra o erro em log.
+
         Args:
             txt_file (str | Path): Caminho do arquivo de texto.
 
         Returns:
-            list[str] | None: Lista de linhas do arquivo ou None em caso de erro
-            (arquivo inexistente, erro de encoding ou falha de leitura).
+            list[str] | None: Lista de linhas ou None em caso de erro.
         """
 
         try:
@@ -83,28 +115,26 @@ class PassagemTurnoParser:
     @staticmethod
     def _processar_linha(linha: str, dados: dict, estado: dict):
         """
-        Processa uma única linha do arquivo de passagem de turno, atualizando
-        incrementalmente o estado do parser e o dicionário final de dados.
+        Processa uma única linha da passagem de turno e atualiza o estado
+        interno do parser e a estrutura final de dados.
 
-        A função identifica:
-           - separadores visuais
-           - início de uma nova subestação (SE)
-           - início de uma nova seção
-           - conteúdo textual pertencente à seção atual
+        A linha pode representar:
+        - Um cabeçalho de subestação (SE)
+        - Um cabeçalho de seção
+        - Conteúdo pertencente à seção atual
+        - Separadores visuais ou linhas vazias (ignorados)
 
-       Args:
-           linha (str): Linha atual do arquivo.
-           dados (dict): Estrutura principal onde os dados parseados são acumulados.
-           estado (dict): Estado mutável do parser contendo:
-               - se_atual: subestação corrente
-               - secao_atual: seção corrente
-               - buffer: linhas acumuladas da seção
-           se_regex (Pattern): Regex para identificar cabeçalhos de SE.
-           secao_regex (Pattern): Regex para identificar cabeçalhos de seção.
+        O método utiliza expressões regulares definidas em constantes
+        para identificar SEs e seções.
 
-       Returns:
-           None
-       """
+        Args:
+            linha (str): Linha atual do arquivo.
+            dados (dict): Estrutura principal onde os dados são acumulados.
+            estado (dict): Estado mutável do parser contendo:
+                - se_atual: subestação corrente
+                - secao_atual: seção corrente
+                - buffer: linhas acumuladas da seção atual
+        """
 
         linha = linha.strip()
         if not linha or linha.startswith("----"):
@@ -136,18 +166,18 @@ class PassagemTurnoParser:
 
     @staticmethod
     def load_text(configuracao: list[str] | None, default: str = "") -> str:
-        """
+       """
         Converte uma lista de strings em um único texto com quebras de linha.
 
-        Útil para transformar listas armazenadas no JSON em blocos de texto
-        exibíveis ou exportáveis.
+        Utilizado principalmente para transformar dados armazenados no JSON
+        em blocos de texto exibíveis em interface gráfica ou exportação.
 
         Args:
-            configuracao (list[str] | None): Lista de linhas.
-            default (str): Valor padrão retornado caso a entrada seja inválida.
+            configuracao (list[str] | None): Lista de linhas de texto.
+            default (str): Valor retornado caso a entrada seja inválida ou vazia.
 
         Returns:
-            str: Texto unificado ou valor padrão.
+            str: Texto concatenado ou valor padrão.
         """
         if not configuracao:
             return default
@@ -245,29 +275,12 @@ class PassagemTurnoParser:
             return None
 
     @staticmethod
-    def parse_passagem_turno(txt_file, json_file='passagem_turno.json'):
-        """
-        Processa um arquivo de passagem de turno em formato texto e gera
-        sua representação estruturada em JSON.
-
-        O método:
-        - lê o arquivo texto
-        - executa o parsing linha a linha
-        - organiza os dados por subestação e seção
-        - persiste o resultado em um arquivo JSON
-
-        Args:
-            txt_file (str | Path): Caminho do arquivo .txt de entrada.
-            json_file (str | Path): Caminho do arquivo .json de saída.
-
-        Returns:
-            bool: True se o processamento e salvamento ocorreram com sucesso,
-            False em caso de falha.
-        """
-        linhas = PassagemTurnoParser._ler_linhas(txt_file)
-        if not linhas:
-            return False
-
+    def parse_from_text(texto):
+        if not texto or not texto.strip():
+            logging.warning("O texto não pode estar vazio!")
+            return None
+        
+        linhas = [l.rstrip() for l in texto.splitlines()]
         dados = {
             '_global': {
                 "outras_acoes_operacionais": [],
@@ -284,10 +297,41 @@ class PassagemTurnoParser:
             PassagemTurnoParser._processar_linha(linha, dados, estado)
         _flush_buffer(dados, estado)
 
+        return dados
+
+
+    @staticmethod
+    def parse_passagem_turno(txt_file, json_file='passagem_turno.json'):
+        """
+        Processa um arquivo de passagem de turno em formato texto e gera
+        sua representação estruturada em JSON.
+
+        O método:
+        - lê o arquivo texto
+        - executa o parsing linha a linha
+        - persiste o resultado em um arquivo JSON
+
+        Args:
+            txt_file (str | Path): Caminho do arquivo .txt de entrada.
+            json_file (str | Path): Caminho do arquivo .json de saída.
+
+        Returns:
+            bool: True se o processamento e salvamento ocorreram com sucesso,
+            False em caso de falha.
+        """
+        linhas = PassagemTurnoParser._ler_linhas(txt_file)
+        if not linhas:
+            return False
+
+        texto = "\n".join(linhas)
+        dados = PassagemTurnoParser.parse_from_text(texto)
+        if not dados:
+            return False
+
         # Salva JSON
         if PassagemTurnoParser.salvar_json(dados, json_file):
             logger.info(
-                f"Parse concluído: {len(dados)} subestações encontradas")
+                f"Parse concluído: {len(dados) - 1} subestações encontradas")
             return True
         return False
 

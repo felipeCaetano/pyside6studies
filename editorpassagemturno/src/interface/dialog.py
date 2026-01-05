@@ -4,7 +4,6 @@ from PySide6.QtWidgets import (QDialog, QDialogButtonBox, QLabel, QVBoxLayout,
 
 
 class PasteDialog(QDialog):
-    text_entry = Signal(str)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -21,6 +20,3 @@ class PasteDialog(QDialog):
         layout.addWidget(self.text)
         layout.addWidget(self.button_box)
         self.setLayout(layout)
-
-    def accept(self, /):
-        self.text_entry.emit(self.text.toPlainText())

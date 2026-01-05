@@ -1,11 +1,19 @@
 {
-    "BGI": {
+    "_global": {
+        "outras_acoes_operacionais": [
+            "06:52 - BGI - Desativado relé 79-01Y1 via DOOS (sem dar ciência a operação BGI), colocado CSTLE no comando do disjuntor 11Y1;",
+            "07:46 - BGI - Ligado 200G1/200G2 em vazio por 30 minutos para testes, sem anormalidade;"
+        ],
+        "outras_informacoes": [
+            "- Sem registros."
+        ]
+    },
+    "SE-BGI": {
         "configuracao_se": [
-            "- 01S4 desenergizada e isolada com 31S4-4/5 abertas, só deve ser energizada com autorização gerencial;",
-            "- 02BP-1 e 02BP-2 seccionadas com disjuntor 12BP aberto;",
-            "- 02H1 desenergizado para controle de tensão;",
+            "- 01S4 desenergizada e isoloda com 31S4-4/5 abertas, só deve ser energizada com autorização gerencial;",
             "- 02J3 e 02J4 desenergizadas, relés 79 desativados e com tensão de retorno;",
-            "- 04T6/T7 com falha na indicação na regulação sage, regulação 13,8kV em MANUAL devido a falha no relé 90;",
+            "- 04T4 desenergizado e como reserva fria da operação;",
+            "- 04T1,04T2,04T4,04T9 selecionado \"Grupo de ajustes 2 nas Proteções\";",
             "- 41S3-8 aberta, só deve ser fechada com autorização gerencial."
         ],
         "configuracao_servicos": [
