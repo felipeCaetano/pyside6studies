@@ -1,12 +1,13 @@
-import sys
+import logging
 
 import qtawesome as qta
-from PySide6.QtCore import Qt, QSize, Signal, Slot
+from PySide6.QtCore import Qt, Signal, Slot
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import (QMainWindow, QWidget, QVBoxLayout,
-                               QHBoxLayout, QPushButton, QLabel, QFileDialog,
-                               QTextEdit, QDialog, QMessageBox)
+                               QHBoxLayout, QPushButton, QFileDialog,
+                               QMessageBox)
 
+from .dialog import PasteDialog
 from .navigationdrawer import NavigationDrawer
 from .sestabwidget import SETabs
 
@@ -112,8 +113,10 @@ class MainWindow(QMainWindow):
                   options=[{'scale_factor': 1.5}], color='white'
               )),
              ],
-            [self.show_config,self.show_config,self.show_config,
-             self.show_config],
+            [
+                self.show_config,self.show_config,self.show_config,
+                self.show_config
+            ],
             self.show_config
         ]
         self.sidebar.add_expandeble_buttons(btn_inter)
@@ -130,37 +133,11 @@ class MainWindow(QMainWindow):
         ]
         self.sidebar.add_menu_buttons(btn_act)
         btn_oth = [
-            'Outras Ações', '', 'black', self.show_config
+            'Outras Informações', '', 'black', self.show_config
         ]
         self.sidebar.add_menu_buttons(btn_oth)
         self.sidebar.layout().addStretch()
 
-        # Conteúdo principal
-        # self.title = QLabel("Conteúdo Principal")
-        # self.title.setStyleSheet("""
-        #     font-size: 32px;
-        #     font-weight: bold;
-        #     color: #2c3e50;
-        #     padding: 20px;
-        # """)
-        # content_layout.addWidget(self.title, alignment=Qt.AlignLeft)
-
-        # # Editor
-        # self.editor = QTextEdit(
-        #     "Tela inicial - exibirá o conteúdo da passagem de turno")
-        # self.editor.setStyleSheet("""
-        #     QTextEdit {
-        #         font-size: 16px;
-        #         color: #2c3e50;
-        #         background-color: white;
-        #         border: 1px solid #bdc3c7;
-        #         border-radius: 5px;
-        #         padding: 10px;
-        #     }
-        # """)
-        # self.editor.document().contentsChanged.connect(
-        #     self.document_was_modified)
-        # content_layout.addWidget(self.editor)
         self.tabs = SETabs(['SE BGI', 'SE JRM'])
         self.tabs.tab_was_changed.connect(self.quando_trocar_aba)
         content_layout.addWidget(self.tabs)
@@ -275,7 +252,9 @@ class MainWindow(QMainWindow):
 
     @Slot()
     def paste(self):
-        ...
+        dialog = PasteDialog(self)
+        if dialog.exec():
+            print(dialog.text.toPlainText())
 
     @Slot()
     def print(self):
@@ -296,9 +275,4 @@ class MainWindow(QMainWindow):
         else:
             self.title.setText(f"{value}")
             self.sidebar_clicked.emit(f"{value}".upper())
-        self.sidebar.toggle()
-
-    @Slot()
-    def show_aux_config(self, value):
-        self.title.setText(f"Configuração - {value}")
         self.sidebar.toggle()

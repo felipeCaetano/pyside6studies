@@ -6,7 +6,7 @@ class SETabs(QWidget):
     def __init__(self, se_names):
         super().__init__()
         self.se_names = se_names
-        self.title = QLabel("Conteúdo Principal")
+        self.title = QLabel("Editor de Passagem de Turno")
         self.title.setStyleSheet("""
             font-size: 26px;
             font-weight: bold;
@@ -17,7 +17,7 @@ class SETabs(QWidget):
         # Criar o widget de abas
         self.tab_widget = QTabWidget()
         self.tab_widget.setStyleSheet("""
-            font-size: 16px;
+            font-size: 18px;
             font-weight: bold;
             color: #2c3e50;
             padding: 10px;""")

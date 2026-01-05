@@ -2,12 +2,28 @@ import json
 import logging
 from pathlib import Path
 
-from .constants import (NOVA_SE, SECAOMAPREVERSO, ORDEMSECOES, SE_REGEX,
-                       SECAO_REGEX, SECAO_MAP)
-
+from .constants import (SECAOMAPREVERSO, ORDEMSECOES, SE_REGEX,
+                        SECAO_REGEX, SECAO_MAP, SECOES_GLOBAIS, SECOES_POR_SE)
 
 logger = logging.getLogger(__name__)
 
+def _flush_buffer(dados, estado):
+    if not estado["secao_atual"] or not estado['buffer']:
+        return
+
+    titulo = estado["secao_atual"]
+
+    if titulo in SECOES_GLOBAIS:
+        chave = SECOES_GLOBAIS[titulo]
+        dados["_global"][chave].extend(estado['buffer'])
+    elif titulo in SECOES_POR_SE:
+        chave = SECOES_POR_SE[titulo]
+        subestacao = estado['se_atual']
+
+        if subestacao:
+            dados[subestacao][chave].extend(estado['buffer'])
+
+    estado['buffer'] = []
 
 def nova_se():
     return {
@@ -23,8 +39,6 @@ def nova_se():
         "intervencoes_devolvida": [],
         "nm_emitidas": [],
         "ocorrencias": [],
-        "outras_acoes_operacionais": [],
-        "outras_informacoes": []
     }
 
 
@@ -67,9 +81,7 @@ class PassagemTurnoParser:
             return None
 
     @staticmethod
-    def _processar_linha(linha: str, dados: dict, estado: dict, se_regex,
-                          secao_regex, secao_map):
-
+    def _processar_linha(linha: str, dados: dict, estado: dict):
         """
         Processa uma única linha do arquivo de passagem de turno, atualizando
         incrementalmente o estado do parser e o dicionário final de dados.
@@ -89,34 +101,37 @@ class PassagemTurnoParser:
                - buffer: linhas acumuladas da seção
            se_regex (Pattern): Regex para identificar cabeçalhos de SE.
            secao_regex (Pattern): Regex para identificar cabeçalhos de seção.
-           secao_map (dict): Mapeamento entre nomes de seções no texto e chaves JSON.
 
        Returns:
            None
        """
 
-        if linha.startswith("----"):
+        linha = linha.strip()
+        if not linha or linha.startswith("----"):
             return
 
-        se_match = se_regex.match(linha)
+        se_match = SE_REGEX.match(linha)
         if se_match:
-            estado['se_atual'] = se_match.group(1)
-            dados[estado['se_atual']] = nova_se()
+            _flush_buffer(dados, estado)
+
+            codigo_se = f'SE-{se_match.group(1)}'
+            estado['se_atual'] = codigo_se
             estado['secao_atual'] = None
             estado['buffer'] = []
+            if codigo_se not in dados:
+                dados[codigo_se] = nova_se()
             return
 
-        secao_match = secao_regex.match(linha)
+        secao_match = SECAO_REGEX.match(linha)
         if secao_match:
-            if estado['secao_atual'] and estado['buffer']:
-                # Adiciona buffer à seção anterior
-                chave_json = secao_map[estado['secao_atual']]
-                dados[estado['se_atual']][chave_json].extend(estado['buffer'])
-            estado['secao_atual'] = secao_match.group(1)
+            _flush_buffer(dados, estado)
+
+            titulo_secao = secao_match.group(1)
+            estado['secao_atual'] = titulo_secao
             estado['buffer'] = []
             return
 
-        if linha.strip():
+        if estado['secao_atual']:
             estado['buffer'].append(linha.strip())
 
     @staticmethod
@@ -250,33 +265,29 @@ class PassagemTurnoParser:
             False em caso de falha.
         """
         linhas = PassagemTurnoParser._ler_linhas(txt_file)
+        if not linhas:
+            return False
 
-        dados = {}
+        dados = {
+            '_global': {
+                "outras_acoes_operacionais": [],
+                "outras_informacoes": []
+            }
+        }
         estado = {
             'se_atual': None,
             'secao_atual': None,
             'buffer': [],
         }
 
-        se_regex = SE_REGEX
-        secao_regex = SECAO_REGEX
-        secao_map = SECAO_MAP
-
-        if not linhas:
-            return False
-
         for linha in linhas:
-            PassagemTurnoParser._processar_linha(
-                linha, dados, estado, se_regex, secao_regex, secao_map)
-
-        # Salva último buffer
-        if estado['se_atual'] and estado['secao_atual'] and estado['buffer']:
-            chave = secao_map[estado['secao_atual']]
-            dados[estado['se_atual']][chave].extend(estado['buffer'])
+            PassagemTurnoParser._processar_linha(linha, dados, estado)
+        _flush_buffer(dados, estado)
 
         # Salva JSON
         if PassagemTurnoParser.salvar_json(dados, json_file):
-            logger.info(f"Parse concluído: {len(dados)} subestações encontradas")
+            logger.info(
+                f"Parse concluído: {len(dados)} subestações encontradas")
             return True
         return False
 

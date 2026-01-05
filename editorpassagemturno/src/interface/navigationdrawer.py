@@ -40,8 +40,6 @@ class NavigationDrawer(QFrame):
         """)
         layout.addWidget(header)
 
-        # layout.addStretch()
-
     def add_menu_buttons(self, buttons_data: list):
         text, icon_name, color, slot = buttons_data
         btn = QPushButton(text)
